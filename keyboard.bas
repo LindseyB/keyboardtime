@@ -1,43 +1,16 @@
 SCREEN 12
 _FULLSCREEN _SQUAREPIXELS 'fullscreen and make it extra boxy
 
-'notes are weird and have no freq pattern
-DIM SHARED notes(31)
-' starting gross array loading
-notes(1) = 131
-notes(2) = 139
-notes(3) = 147
-notes(4) = 156
-notes(5) = 165
-notes(6) = 175
-notes(7) = 185
-notes(8) = 196
-notes(9) = 208
-notes(10) = 220
-notes(11) = 233
-notes(12) = 247
-notes(13) = 262
-notes(14) = 277
-notes(15) = 294
-notes(16) = 311
-notes(17) = 330
-notes(18) = 349
-notes(19) = 370
-notes(20) = 392
-notes(21) = 415
-notes(22) = 440
-notes(23) = 466
-notes(24) = 494
-notes(25) = 523
-notes(26) = 554
-notes(27) = 587
-notes(28) = 622
-notes(29) = 659
-notes(30) = 698
-notes(31) = 740
-'end disgusting array loading
+'Tuning:
+CONST ConcertA4Freq = 440 'hz
+CONST A4KeyNum = 49
+CONST LowKeyNum = 28 'Left-most key: C3 Low C
 
+DIM SHARED notes(31)
+
+SetupNotes
 SetupCursor
+
 DO: _LIMIT 30 'set to 30 fps
     DO WHILE _MOUSEINPUT: LOOP
     DrawKeys
@@ -47,6 +20,17 @@ DO: _LIMIT 30 'set to 30 fps
 
     END IF
 LOOP UNTIL INKEY$ = CHR$(27) 'exit on ESC key
+
+FUNCTION NoteFreq (keyNum)
+'See: http://en.wikipedia.org/wiki/Piano_key_frequencies
+NoteFreq = (2 ^ ((keyNum - A4KeyNum) / 12)) * ConcertA4Freq
+END FUNCTION
+
+SUB SetupNotes
+FOR i = 1 TO 31
+    notes(i) = NoteFreq((LowKeyNum - 1) + i)
+NEXT
+END SUB
 
 SUB SetupCursor
 ON TIMER(0.02) UpdateCursor
